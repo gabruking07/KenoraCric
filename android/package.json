@@ -2,25 +2,29 @@
   "name": "@kenoracric/mobile",
   "version": "1.0.0",
   "private": true,
-  "main": "expo-router/entry",
+  "main": "index.js",
   "scripts": {
-    "start": "npm run build --workspace=@kenoracric/contracts && npm run build --workspace=@kenoracric/cricket-engine && npm run build --workspace=@kenoracric/api-client && expo start",
-    "android": "npm run build --workspace=@kenoracric/contracts && npm run build --workspace=@kenoracric/cricket-engine && npm run build --workspace=@kenoracric/api-client && expo start --android",
+    "configure-api": "node scripts/configure-api.mjs",
+    "start": "npm run configure-api && npm run build --workspace=@kenoracric/contracts && npm run build --workspace=@kenoracric/cricket-engine && npm run build --workspace=@kenoracric/api-client && react-native start",
+    "android": "npm run configure-api && npm run build --workspace=@kenoracric/contracts && npm run build --workspace=@kenoracric/cricket-engine && npm run build --workspace=@kenoracric/api-client && react-native run-android",
+    "apk:debug": "npm run configure-api && npm run build --workspace=@kenoracric/contracts && npm run build --workspace=@kenoracric/cricket-engine && npm run build --workspace=@kenoracric/api-client && android\\gradlew.bat -p android assembleDebug",
     "typecheck": "npm run build --workspace=@kenoracric/contracts && npm run build --workspace=@kenoracric/cricket-engine && npm run build --workspace=@kenoracric/api-client && tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {
     "@kenoracric/api-client": "^1.0.0",
     "@kenoracric/contracts": "^1.0.0",
     "@kenoracric/cricket-engine": "^1.0.0",
-    "expo": "~52.0.27",
-    "expo-router": "~4.0.17",
-    "expo-sqlite": "~15.1.2",
-    "expo-status-bar": "~2.0.1",
+    "@react-native-async-storage/async-storage": "^2.1.2",
     "react": "18.3.1",
     "socket.io-client": "^4.8.1",
     "react-native": "0.76.6"
   },
   "devDependencies": {
+    "@react-native/babel-preset": "0.76.6",
+    "@react-native/metro-config": "0.76.6",
+    "@react-native/typescript-config": "0.76.6",
+    "@react-native-community/cli": "15.0.1",
+    "@react-native-community/cli-platform-android": "15.0.1",
     "@types/react": "~18.3.12",
     "typescript": "^5.7.3"
   }

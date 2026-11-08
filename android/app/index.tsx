@@ -1,12 +1,10 @@
-import {Link} from "expo-router";
 import {useEffect,useState} from "react";
-import {ScrollView,StyleSheet,Text,View} from "react-native";
-import * as SQLite from "expo-sqlite";
+import {Pressable,ScrollView,StyleSheet,Text,View} from "react-native";
 import {io} from "socket.io-client";
 import type {MatchRecord} from "@kenoracric/api-client";
 import {api} from "../src/lib/api";
 
-export default function Home(){
+export default function Home({onOpenScoring}:{onOpenScoring:()=>void}){
   const [matches,setMatches]=useState<MatchRecord[]>([]);
   const [databaseReady,setDatabaseReady]=useState(false);
   const [error,setError]=useState("");
@@ -14,11 +12,7 @@ export default function Home(){
   const pastMatches=matches.filter(match=>match.status==="completed").sort((a,b)=>Date.parse(b.startAt||"")-Date.parse(a.startAt||""));
   useEffect(()=>{
     const socket=io(api.socketUrl);
-    SQLite.openDatabaseAsync("kenoracric.db").then(async database=>{
-      await database.execAsync("CREATE TABLE IF NOT EXISTS pending_events (event_id TEXT PRIMARY KEY, match_id TEXT, sequence INTEGER, payload TEXT, created_at TEXT DEFAULT CURRENT_TIMESTAMP);");
-      await database.execAsync("CREATE TABLE IF NOT EXISTS mobile_settings (key TEXT PRIMARY KEY, value TEXT NOT NULL);");
-      setDatabaseReady(true);
-    }).catch(()=>setError("Could not open the local database."));
+    setDatabaseReady(true);
     api.matches.list().then(items=>{
       setMatches(items);
       for(const match of items)socket.emit("match:join",match._id);
@@ -30,7 +24,7 @@ export default function Home(){
     <Text style={styles.kicker}>KENORATECH / CRICKET, LIVE</Text>
     <Text style={styles.title}>Every Ball.{"\n"}<Text style={styles.gold}>Every Moment.</Text></Text>
     <Text style={styles.copy}>Follow cricket worldwide, from first ball to final result.</Text>
-    <Link href="/scoring" style={styles.button}>Open scorer workspace</Link>
+    <Pressable onPress={onOpenScoring} style={styles.button}><Text style={styles.buttonText}>Open scorer workspace</Text></Pressable>
     <Text style={styles.heading}>Live & upcoming</Text>
     {currentMatches.map(match=><View key={match._id} style={styles.card}>
       <Text style={styles.status}>{match.status.toUpperCase()} / {match.format}</Text>
@@ -57,7 +51,7 @@ const styles=StyleSheet.create({
   kicker:{color:"#ffc928",fontSize:10,letterSpacing:2,fontWeight:"700"},
   title:{color:"#fff",fontSize:42,fontWeight:"800",lineHeight:48,marginTop:20},gold:{color:"#ffc928"},
   copy:{color:"#9eafc5",fontSize:14,lineHeight:22,marginTop:14},
-  button:{backgroundColor:"#ffc928",color:"#081932",fontWeight:"700",padding:15,marginTop:24,overflow:"hidden",alignSelf:"flex-start"},
+  button:{backgroundColor:"#ffc928",padding:15,marginTop:24,alignSelf:"flex-start"},buttonText:{color:"#081932",fontWeight:"700"},
   heading:{color:"#fff",fontSize:22,fontWeight:"700",marginTop:38,marginBottom:14},
   card:{backgroundColor:"#0d2342",borderColor:"#ffffff20",borderWidth:1,padding:18,marginBottom:12},
   status:{color:"#ffc928",fontSize:10,letterSpacing:1,fontWeight:"700"},team:{color:"#fff",fontSize:18,fontWeight:"700",marginTop:14},

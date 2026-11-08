@@ -2,7 +2,6 @@
 .env
 .env.*.local
 dist
-.expo
 coverage
 *.log
 *.tsbuildinfo

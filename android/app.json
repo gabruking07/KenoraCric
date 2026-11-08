@@ -1,31 +1,4 @@
 {
-  "expo": {
-    "name": "KenoraCric",
-    "slug": "kenoracric",
-    "scheme": "kenoracric",
-    "version": "1.0.0",
-    "orientation": "portrait",
-    "userInterfaceStyle": "dark",
-    "android": {
-      "package": "com.kenoratech.kenoracric",
-      "permissions": [
-        "INTERNET"
-      ]
-    },
-    "plugins": [
-      "expo-router",
-      "expo-sqlite"
-    ],
-    "experiments": {
-      "typedRoutes": true
-    },
-    "extra": {
-      "router": {
-        "origin": false
-      },
-      "eas": {
-        "projectId": "6ec4f48f-2a54-41b0-b518-3301a19c96bb"
-      }
-    }
-  }
+  "name": "KenoraCric",
+  "displayName": "KenoraCric"
 }

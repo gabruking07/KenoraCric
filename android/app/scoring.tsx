@@ -1,26 +1,23 @@
 import {useEffect,useState} from "react";
 import {Pressable,ScrollView,StyleSheet,Text,TextInput,View} from "react-native";
-import * as SQLite from "expo-sqlite";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import {io} from "socket.io-client";
 import {applyDelivery,newInnings,overs,type Innings} from "@kenoracric/cricket-engine";
 import type {MatchRecord,ScoreDelivery} from "@kenoracric/api-client";
 import {api} from "../src/lib/api";
 
-export default function Scoring(){
+function createEventId(){return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g,character=>{const value=Math.random()*16|0;return (character==="x"?value:(value&3|8)).toString(16);});}
+
+export default function Scoring({onBack}:{onBack:()=>void}){
   const [matches,setMatches]=useState<MatchRecord[]>([]);
   const [match,setMatch]=useState<MatchRecord|null>(null);
   const [innings,setInnings]=useState<Innings>(newInnings());
-  const [database,setDatabase]=useState<SQLite.SQLiteDatabase|null>(null);
   const [email,setEmail]=useState("");
   const [password,setPassword]=useState("");
   const [token,setToken]=useState("");
   const [message,setMessage]=useState("Sign in with a scorer account to sync scoring.");
   useEffect(()=>{
     api.matches.list().then(setMatches).catch(()=>setMessage("Could not reach the KenoraCric server."));
-    SQLite.openDatabaseAsync("kenoracric.db").then(async db=>{
-      await db.execAsync("CREATE TABLE IF NOT EXISTS pending_events (event_id TEXT PRIMARY KEY, match_id TEXT, sequence INTEGER, payload TEXT, created_at TEXT DEFAULT CURRENT_TIMESTAMP);");
-      setDatabase(db);
-    }).catch(()=>setMessage("Could not open the local scoring database."));
   },[]);
 
   useEffect(()=>{
@@ -42,22 +39,22 @@ export default function Scoring(){
   }
   async function addDelivery(delivery:ScoreDelivery){
     if(!match){setMessage("Select a match before scoring.");return;}
-    if(!database){setMessage("Preparing local scoring storage. Try again in a moment.");return;}
     const nextInnings=applyDelivery(innings,delivery);
-    const event={eventId:crypto.randomUUID(),sequence:match.sequence+1,delivery};
+    const event={eventId:createEventId(),sequence:match.sequence+1,delivery};
     const updatedMatch={...match,sequence:event.sequence,innings:nextInnings};
     setInnings(nextInnings);setMatch(updatedMatch);
     setMatches(current=>current.map(item=>item._id===match._id?updatedMatch:item));
-    try{await database.runAsync("INSERT OR IGNORE INTO pending_events (event_id,match_id,sequence,payload) VALUES (?,?,?,?)",event.eventId,match._id,event.sequence,JSON.stringify(delivery));}
+    try{const stored=await AsyncStorage.getItem("pending_events");const pending=stored?JSON.parse(stored):[];pending.push({eventId:event.eventId,matchId:match._id,sequence:event.sequence,delivery});await AsyncStorage.setItem("pending_events",JSON.stringify(pending));}
     catch{setMessage("Could not save the delivery to local storage.");return;}
     if(!token){setMessage("Saved locally. Sign in with a scorer account to sync.");return;}
     try{
       await api.scoring.submit(match._id,event,token);
-      await database.runAsync("DELETE FROM pending_events WHERE event_id=?",event.eventId);
+      const stored=await AsyncStorage.getItem("pending_events");const pending=stored?JSON.parse(stored):[];await AsyncStorage.setItem("pending_events",JSON.stringify(pending.filter((item:{eventId:string})=>item.eventId!==event.eventId)));
       setMessage("Delivery synced.");
     }catch(error){setMessage(error instanceof Error?"Saved locally. "+error.message:"Saved locally; server sync failed.");}
   }
   return <ScrollView style={styles.page} contentContainerStyle={styles.content}>
+    <Pressable onPress={onBack}><Text style={styles.signOut}>← Back to matches</Text></Pressable>
     <Text style={styles.kicker}>SCORER WORKSPACE</Text><Text style={styles.title}>Quick score</Text><Text style={styles.message}>{message}</Text>
     {!token&&<View style={styles.authCard}><Text style={styles.label}>Scorer sign-in</Text>
       <TextInput value={email} onChangeText={setEmail} autoCapitalize="none" keyboardType="email-address" placeholder="Email" placeholderTextColor="#778aa4" style={styles.input}/>

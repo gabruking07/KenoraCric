@@ -11,7 +11,7 @@
   "scripts": {
     "dev": "npm run build && concurrently -k -n api,web -c blue,magenta \"npm run dev --workspace=@kenoracric/api\" \"npm run dev --workspace=@kenoracric/web\"",
     "start": "npm run dev",
-    "android": "npm run start --workspace=@kenoracric/mobile",
+    "android": "npm run android --workspace=@kenoracric/mobile",
     "seed:demo": "node server/scripts/seed-demo.mjs",
     "build": "npm run build --workspace=@kenoracric/contracts && npm run build --workspace=@kenoracric/cricket-engine && npm run build --workspace=@kenoracric/api-client && npm run build --workspace=@kenoracric/api && npm run build --workspace=@kenoracric/web",
     "typecheck": "npm run build && npm run typecheck --workspaces --if-present",
