@@ -1,0 +1,9 @@
+{
+  "files.exclude": {
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/.expo": true,
+    "**/*.tsbuildinfo": true,
+    ".vscode": true
+  }
+}

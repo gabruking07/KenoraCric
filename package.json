@@ -2,16 +2,27 @@
   "name": "kenoracric",
   "private": true,
   "version": "1.0.0",
-  "packageManager": "pnpm@9.15.4",
+  "workspaces": [
+    "web",
+    "android",
+    "server",
+    "server/packages/*"
+  ],
   "scripts": {
-    "dev": "pnpm -r build && concurrently -k -n api,web -c blue,magenta \"pnpm --filter @kenoracric/api dev\" \"pnpm --filter @kenoracric/web dev\"",
-    "start": "pnpm run dev",
-    "build": "pnpm -r build",
-    "typecheck": "pnpm -r build && pnpm -r typecheck",
-    "test": "pnpm --filter @kenoracric/cricket-engine test"
+    "dev": "npm run build && concurrently -k -n api,web -c blue,magenta \"npm run dev --workspace=@kenoracric/api\" \"npm run dev --workspace=@kenoracric/web\"",
+    "start": "npm run dev",
+    "android": "npm run start --workspace=@kenoracric/mobile",
+    "seed:demo": "node server/scripts/seed-demo.mjs",
+    "build": "npm run build --workspace=@kenoracric/contracts && npm run build --workspace=@kenoracric/cricket-engine && npm run build --workspace=@kenoracric/api-client && npm run build --workspace=@kenoracric/api && npm run build --workspace=@kenoracric/web",
+    "typecheck": "npm run build && npm run typecheck --workspaces --if-present",
+    "test": "npm test --workspace=@kenoracric/cricket-engine"
   },
   "devDependencies": {
     "concurrently": "^9.1.2",
     "typescript": "^5.7.3"
+  },
+  "allowScripts": {
+    "esbuild@0.28.2": true,
+    "esbuild@0.25.12": true
   }
 }

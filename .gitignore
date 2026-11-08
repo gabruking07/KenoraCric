@@ -7,3 +7,12 @@ coverage
 *.log
 *.tsbuildinfo
 guide.txt
+secret/*
+!secret/README.md
+!secret/guide.txt
+!secret/env/
+secret/env/*
+!secret/env/.env.example
+!secret/env/server.env.example
+!secret/env/web.env.example
+!secret/env/android.env.example

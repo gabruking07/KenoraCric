@@ -1,0 +1,12 @@
+{
+  "expo": {
+    "extra": {
+      "eas": {
+        "projectId": "6ec4f48f-2a54-41b0-b518-3301a19c96bb"
+      }
+    },
+    "android": {
+      "package": "com.gabruking07.kenoracric"
+    }
+  }
+}

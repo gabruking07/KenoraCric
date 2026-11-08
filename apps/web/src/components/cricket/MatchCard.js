@@ -1,8 +1,0 @@
-import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
-import { Activity } from "lucide-react";
-import { Link } from "react-router-dom";
-import { overs } from "@kenoracric/cricket-engine";
-export function MatchCard({ match }) {
-    return _jsxs(Link, { to: "/matches/" + match._id, className: "score-card", children: [_jsxs("div", { className: "card-top", children: [_jsxs("span", { className: match.status === "live" ? "live-pill" : "upcoming-pill", children: [_jsx("i", {}), match.status] }), _jsx("span", { children: match.format })] }), _jsxs("div", { className: "teams", children: [_jsxs("div", { children: [_jsx("b", { children: match.teamA }), _jsx("small", { children: "HOME" })] }), _jsxs("strong", { children: [match.innings.runs, _jsxs("em", { children: ["/", match.innings.wickets] })] })] }), _jsxs("div", { className: "teams", children: [_jsxs("div", { children: [_jsx("b", { children: match.teamB }), _jsx("small", { children: "AWAY" })] }), _jsx("span", { className: "team-score", children: "-" })] }), _jsxs("div", { className: "card-foot", children: [_jsxs("span", { children: [_jsx(Activity, { size: 13 }), " ", overs(match.innings.legalBalls), " ov"] }), _jsx("span", { children: match.venue || "Venue TBC" })] })] });
-}
-//# sourceMappingURL=MatchCard.js.map
