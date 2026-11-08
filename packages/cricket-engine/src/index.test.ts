@@ -1,0 +1,7 @@
+import {test} from "node:test"; import {strict as assert} from "node:assert"; import {applyDelivery,newInnings,overs,undoDelivery} from "./index.ts";
+test("illegal wide adds extras but not a legal ball",()=>{const s=applyDelivery(newInnings(),{runs:0,extra:"wides"});assert.equal(s.runs,1);assert.equal(s.legalBalls,0);assert.equal(s.extras.wides,1)});
+test("legal runs count deliveries and overs as balls",()=>{let s=newInnings();for(let i=0;i<7;i++)s=applyDelivery(s,{runs:1});assert.equal(overs(s.legalBalls),"1.1");assert.equal(s.runs,7)});
+test("target completion and undo",()=>{let s=applyDelivery(newInnings(2),{runs:2});assert.equal(s.complete,true);s=undoDelivery(s);assert.equal(s.runs,0);assert.equal(s.complete,false)});
+test("boundaries and a wicket update total and wickets",()=>{let s=newInnings();s=applyDelivery(s,{runs:4});s=applyDelivery(s,{runs:6});s=applyDelivery(s,{runs:0,wicket:"run_out"});assert.equal(s.runs,10);assert.equal(s.wickets,1);assert.equal(s.legalBalls,3)});
+test("no-ball is extra and does not use a legal ball",()=>{const s=applyDelivery(newInnings(),{runs:4,extra:"noBalls"});assert.equal(s.runs,5);assert.equal(s.extras.noBalls,1);assert.equal(s.legalBalls,0)});
+test("innings closes after ten wickets",()=>{let s=newInnings();for(let i=0;i<10;i++)s=applyDelivery(s,{runs:0,wicket:"bowled"});assert.equal(s.complete,true);assert.throws(()=>applyDelivery(s,{runs:1}),/complete/)});

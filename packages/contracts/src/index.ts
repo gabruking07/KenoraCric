@@ -1,0 +1,20 @@
+import {z} from "zod";
+
+export type MatchStatus="scheduled"|"live"|"completed"|"abandoned";
+export type MatchFormat="T10"|"T20"|"ODI"|"Test"|"Custom";
+export const matchFormatSchema=z.enum(["T10","T20","ODI","Test","Custom"]);
+export const registerSchema=z.object({name:z.string().trim().min(2).max(80),email:z.string().email(),password:z.string().min(10)});
+export const loginSchema=z.object({email:z.string().email(),password:z.string().min(1)});
+export const createMatchSchema=z.object({title:z.string().trim().min(3).max(120),teamA:z.string().trim().min(2).max(80),teamB:z.string().trim().min(2).max(80),venue:z.string().trim().max(120).optional(),format:matchFormatSchema.default("T20"),oversLimit:z.number().int().positive().max(90).default(20),startAt:z.string().datetime().optional()});
+export const scoreDeliverySchema=z.object({runs:z.number().int().min(0).max(7),batterRuns:z.number().int().min(0).optional(),extra:z.enum(["wides","noBalls","byes","legByes","penalties"]).optional(),extraRuns:z.number().int().min(0).optional(),wicket:z.enum(["bowled","caught","lbw","stumped","run_out","hit_wicket","retired_hurt","retired_out","obstructing","hit_twice","timed_out"]).optional()});
+export const scoreSubmissionSchema=z.object({eventId:z.string().uuid(),sequence:z.number().int().positive(),delivery:scoreDeliverySchema});
+export type MatchSummary={_id:string;title:string;teamA:string;teamB:string;venue?:string;format:MatchFormat;status:MatchStatus;sequence:number};
+export type CricketInningsState={runs:number;wickets:number;legalBalls:number;extras:{wides:number;noBalls:number;byes:number;legByes:number;penalties:number};balls:Array<ScoreDelivery&{legal?:boolean}>;target?:number;complete:boolean;freeHit:boolean};
+export type MatchRecord=MatchSummary&{oversLimit:number;startAt?:string;innings:CricketInningsState;events:Array<{eventId:string;sequence:number;runs:number;wicket?:string;extra?:string}>};
+export type CreateMatchInput=z.input<typeof createMatchSchema>;
+export type ScoreDelivery=z.infer<typeof scoreDeliverySchema>;
+export type ScoreSubmission=z.infer<typeof scoreSubmissionSchema>;
+export type RegisterInput=z.infer<typeof registerSchema>;
+export type LoginInput=z.infer<typeof loginSchema>;
+export type AuthUser={id:string;name:string;email:string;role:string};
+export type AuthResponse={token:string;user:AuthUser};

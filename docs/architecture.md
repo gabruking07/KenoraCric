@@ -1,0 +1,3 @@
+# Architecture
+
+pnpm workspace with a Vite React web client, Expo Router native client, a single Express/Mongoose API, shared request contracts, shared typed API client, and shared scoring package. Web and Android call the same /api/v1 routes; each app only supplies its base URL for its runtime. The API owns authorization and MongoDB persistence. Scoring events have UUID idempotency keys and monotonically increasing match sequences; Socket.IO publishes accepted score state to match rooms. Backend configuration, database connection, models, auth middleware, business routes, and socket setup live in separate modules under apps/api/src.

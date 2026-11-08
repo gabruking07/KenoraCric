@@ -1,0 +1,17 @@
+{
+  "name": "kenoracric",
+  "private": true,
+  "version": "1.0.0",
+  "packageManager": "pnpm@9.15.4",
+  "scripts": {
+    "dev": "pnpm -r build && concurrently -k -n api,web -c blue,magenta \"pnpm --filter @kenoracric/api dev\" \"pnpm --filter @kenoracric/web dev\"",
+    "start": "pnpm run dev",
+    "build": "pnpm -r build",
+    "typecheck": "pnpm -r build && pnpm -r typecheck",
+    "test": "pnpm --filter @kenoracric/cricket-engine test"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "typescript": "^5.7.3"
+  }
+}
