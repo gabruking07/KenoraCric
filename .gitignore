@@ -5,6 +5,10 @@ dist
 coverage
 *.log
 *.tsbuildinfo
+.idea/
+**/.idea/
+**/.cxx/
+android/android/local.properties
 guide.txt
 secret/*
 !secret/README.md
