@@ -8,6 +8,7 @@
     "start": "npm run configure-api && npm run build --workspace=@kenoracric/contracts && npm run build --workspace=@kenoracric/cricket-engine && npm run build --workspace=@kenoracric/api-client && react-native start",
     "android": "npm run configure-api && npm run build --workspace=@kenoracric/contracts && npm run build --workspace=@kenoracric/cricket-engine && npm run build --workspace=@kenoracric/api-client && react-native run-android",
     "apk:debug": "npm run configure-api && npm run build --workspace=@kenoracric/contracts && npm run build --workspace=@kenoracric/cricket-engine && npm run build --workspace=@kenoracric/api-client && android\\gradlew.bat -p android assembleDebug",
+    "apk:release": "npm run configure-api && npm run build --workspace=@kenoracric/contracts && npm run build --workspace=@kenoracric/cricket-engine && npm run build --workspace=@kenoracric/api-client && android\\gradlew.bat -p android assembleRelease",
     "typecheck": "npm run build --workspace=@kenoracric/contracts && npm run build --workspace=@kenoracric/cricket-engine && npm run build --workspace=@kenoracric/api-client && tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {
